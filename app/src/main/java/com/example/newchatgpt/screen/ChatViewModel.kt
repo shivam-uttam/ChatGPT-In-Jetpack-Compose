@@ -6,9 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.newchatgpt.model.Message
 import com.example.newchatgpt.model.OpenAIRequestBody
 import com.example.newchatgpt.network.ApiService
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ChatViewModel : ViewModel() {
+@HiltViewModel
+class ChatViewModel @Inject constructor (private val apiService: ApiService) : ViewModel() {
     val messages = mutableStateListOf<Message>()
 
     fun sendMessage(text: String, isUser: Boolean = true) {
