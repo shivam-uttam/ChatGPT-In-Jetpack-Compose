@@ -1,6 +1,5 @@
 package com.example.newchatgpt.model
 
-
 data class OpenAIRequestBody(
     val model: String = "gpt-3.5-turbo",
     val messages: List<Message>,
