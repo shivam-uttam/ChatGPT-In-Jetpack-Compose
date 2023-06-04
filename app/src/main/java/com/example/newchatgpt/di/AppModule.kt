@@ -38,8 +38,8 @@ object AppModule {
     }
 
     @Provides
-    fun provideChatViewModel(repository: Repository): ChatViewModel {
-        return ChatViewModel(repository)
+    fun provideChatViewModel(repository: Repository, @ApplicationContext context: Context): ChatViewModel {
+        return ChatViewModel(repository, context)
     }
 
     @Singleton

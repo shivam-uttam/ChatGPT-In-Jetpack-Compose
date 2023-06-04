@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.newchatgpt.screen.ChatScreen
 import com.example.newchatgpt.screen.ChatViewModel
@@ -22,7 +23,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             NewChatGptTheme {
-                val chatViewModel = viewModel<ChatViewModel>()
+//                val chatViewModel = viewModel<ChatViewModel>()
+//                val chatViewModel = ViewModelProvider(this).get(ChatViewModel::class.java) // For activity
+//// or
+                val chatViewModel = ViewModelProvider(this).get(ChatViewModel::class.java) // For fragment
+
                 ChatScreen(chatViewModel)
 
             }
