@@ -1,11 +1,17 @@
 package com.example.newchatgpt.screen
 
 
+import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,13 +34,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.HorizontalAlignmentLine
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.concurrent.atomic.AtomicLong
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(viewModel: ChatViewModel) {
+    val context = LocalContext.current
+
+
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
@@ -44,9 +57,9 @@ fun ChatScreen(viewModel: ChatViewModel) {
         ) {
             items(viewModel.messages.reversed()) { message ->
                 if (message.isUser) {
-                    MessageBubble(message.content, Alignment.End)
+                    MessageBubble(message.content, Alignment.End, Color.LightGray)
                 } else {
-                    MessageBubble(message.content, Alignment.Start)
+                    MessageBubble(message.content, Alignment.Start, Color.Gray)
                 }
             }
         }
@@ -54,7 +67,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(start = 16.dp, bottom = 16.dp)
         ) {
             var inputText by remember { mutableStateOf("") }
             TextField(
@@ -63,9 +76,9 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 modifier = Modifier.weight(1f),
                 colors = TextFieldDefaults.textFieldColors(),
                 label = { Text("Type a message") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
-                keyboardActions = KeyboardActions(onSend = {
+                singleLine = false,
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Default),
+                keyboardActions = KeyboardActions(onAny = {
                     viewModel.sendMessage(inputText)
                     inputText = ""
                 })
@@ -73,10 +86,14 @@ fun ChatScreen(viewModel: ChatViewModel) {
 
             IconButton(
                 onClick = {
-                    viewModel.sendMessage(inputText)
-                    inputText = ""
+                    inputText = inputText.trim()
+
+                    if (inputText.isNotEmpty() && inputText.isNotBlank() ) {
+                        viewModel.sendMessage(inputText)
+                        inputText = ""
+                    }
+
                 },
-                modifier = Modifier.padding(start = 8.dp)
             ) {
                 Icon(Icons.Default.Send, contentDescription = "Send message")
             }
@@ -84,14 +101,19 @@ fun ChatScreen(viewModel: ChatViewModel) {
     }
 }
 
+
 @Composable
-fun MessageBubble(text: String, alignment: Alignment.Horizontal) {
+fun MessageBubble(text: String, alignment: Alignment.Horizontal, color: Color) {
+    val bubbleAlignment = if (alignment == Alignment.End) Alignment.End else Alignment.Start
+
     Surface(
         shape = MaterialTheme.shapes.medium,
         tonalElevation = 4.dp,
         modifier = Modifier
             .padding(vertical = 4.dp)
-            .wrapContentWidth(alignment)
+            .fillMaxWidth()
+            .wrapContentWidth(bubbleAlignment),
+        color = color
     ) {
         Text(
             text = text,
